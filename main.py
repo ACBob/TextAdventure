@@ -3,9 +3,12 @@
 
 import player
 import commandSystem
+import shared
+
+from utilityprints import *
 
 def mainLoop():
-    print("Main loop")
+    Debug("Main loop")
     isRunning = True
     playerCharacter = player.spPlayer(0,0,'George')
     while isRunning:
@@ -13,12 +16,14 @@ def mainLoop():
         actionArgs = action.split(' ')[1:]
         command = action.split(' ')[0]
         if action == 'Quit':
-            print("Quit.")
+            Info("Quit.")
             return 0
         else:
-            commandSystem.RunCommand(command,actionArgs)
+            commandSystem.RunCommand(command,actionArgs,playerCharacter.getId())
 
 
 
+shared.debug = True
+Info("Debug. Remember to disable.")
 
 mainLoop()

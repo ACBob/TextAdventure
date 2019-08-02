@@ -1,3 +1,4 @@
+import player
 class direction:
     def __init__(self,direction):
         """Probably Wasteful."""
@@ -6,3 +7,6 @@ class direction:
         else:
             print("Invalid Direction")
             return 1
+
+def getPlayerFromId(ID):
+    return player.Players[ID]

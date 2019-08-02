@@ -2,6 +2,10 @@
 
 import util
 
+Players = [
+    0 #Player 0 is the U n i v e r s e (it's actually not)
+    ]
+
 class spPlayer:
     def __init__(self,rx,ry,name):
         """rx = Room X
@@ -13,6 +17,16 @@ class spPlayer:
         self.name = name
         self.rx = rx
         self.ry = ry
+
+        self.PlayerId = Players[-1]+1
+        Players.append(self)
+
+    def getId(self):
+        return self.PlayerId
+
+    def getName(self):
+        return self.name
+        
     def directionalMove(direction):
         """Will move the player in a direction.
            Expects a direction.
