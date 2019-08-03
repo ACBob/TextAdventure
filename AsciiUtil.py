@@ -16,7 +16,8 @@ def openImageAsASCII(file,TrueColor):
     #Based Partly On https://www.geeksforgeeks.org/converting-image-ascii-image-python/
     if not type(file) == str:
         return Exception("Requires String Path!")
-    image = Image.open(file)
+    try: image = Image.open(file)
+    except FileNotFoundError: print('File not found!') ; return []
     usedImage = image.convert('L')
     #image.show()
 
@@ -124,3 +125,16 @@ def openImageAsASCII(file,TrueColor):
     #for i in amig:
     #    print(i.replace('\n',''))
     return amig
+
+if __name__ == "__main__":
+    Running = True
+    truecolor = None
+    while not type(truecolor) == bool:
+        truecolor = bool(input('True Color? '))
+    while Running:
+        i = input('Image: ')
+        if i == 'stop':
+            Running = False
+        else:
+            for j in openImageAsASCII(i,truecolor):
+                print(j.replace('\n',''))
