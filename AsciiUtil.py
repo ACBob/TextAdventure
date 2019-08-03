@@ -2,7 +2,7 @@ from PIL import Image
 import math
 import numpy as np
 
-pallette = "▒░ "
+pallette = "$@B%8&WM#*oahkbdpqwmZO0QLCJUYXzcvunxrjft/\|()1{}[]?-_+~<>i!lI;:,\"^`'. "
 
 def getAverageL(image,TrueColor=False):
 
@@ -13,6 +13,7 @@ def getAverageL(image,TrueColor=False):
     return np.average(im.reshape(w*h))
 
 def openImageAsASCII(file,TrueColor):
+    #Based Partly On https://www.geeksforgeeks.org/converting-image-ascii-image-python/
     if not type(file) == str:
         return Exception("Requires String Path!")
     image = Image.open(file)
@@ -71,7 +72,7 @@ def openImageAsASCII(file,TrueColor):
 
             avg = int(getAverageL(img))
 
-            gsval = pallette[int((avg*2)/255)]
+            gsval = pallette[int((avg*69)/255)]
 
             #print(gsval)
             #r='255'
