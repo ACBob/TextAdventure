@@ -1,7 +1,7 @@
 """Handles Commands."""
 
 import shared
-import utilityprints
+from utilityprints import *
 import util
 
 class Command:
@@ -44,7 +44,7 @@ Command('MyName','Provides Your Name.','print(util.getPlayerFromId(FirerId).getN
 
 #Command('Die','Stops your heart.','print("Your heart stops beating, and you stop breathing. You are Dead. Game Over.") ; exit',False)
 
-Command('Move','Moves in Specified Direction.','util.getPlayerFromId(id).Move(direction)',False)
+Command('Move','Moves in Specified Direction.','util.getPlayerFromId(id).directionalMove(direction)',False)
 
 global Commands
 Commands = {}
