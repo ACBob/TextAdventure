@@ -2,7 +2,7 @@ from PIL import Image
 import math
 import numpy as np
 
-pallette = "@%#*+=-:. "
+pallette = "▒░ "
 
 def getAverageL(image,TrueColor=False):
 
@@ -12,7 +12,7 @@ def getAverageL(image,TrueColor=False):
 
     return np.average(im.reshape(w*h))
 
-def openImageAsASCII(file):
+def openImageAsASCII(file,TrueColor):
     if not type(file) == str:
         return Exception("Requires String Path!")
     image = Image.open(file)
@@ -71,7 +71,7 @@ def openImageAsASCII(file):
 
             avg = int(getAverageL(img))
 
-            gsval = pallette[int((avg*9)/255)]
+            gsval = pallette[int((avg*2)/255)]
 
             #print(gsval)
             #r='255'
