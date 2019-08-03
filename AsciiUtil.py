@@ -20,8 +20,8 @@ def openImageAsASCII(file):
     image.show()
 
     W,H = usedImage.size[0],usedImage.size[1]
-    print(W)
-    print(H)
+    #print(W)
+    #print(H)
 
     cols = 80
     scale = 0.43
@@ -29,15 +29,15 @@ def openImageAsASCII(file):
     w = W/cols
 
     h = w/scale
-    print(w)
-    print(h)
+    #print(w)
+    #print(h)
 
 
     rows = int(H/h)
     global amig
     amig = []
 
-    print(rows)
+    #print(rows)
     #SmolImage = image
     #SmolImage.thumbnail((int(w),int(h)), Image.NEAREST)
     
@@ -80,7 +80,7 @@ def openImageAsASCII(file):
             
             r,g,b = rgb.getpixel((0,0))
             r,g,b = int(r),int(g),int(b)
-            print(r,g,b)
+            #print(r,g,b)
             if not TrueColor:
                 #NOT TRUE COLOR.
                 if r > g and b:
@@ -108,10 +108,10 @@ def openImageAsASCII(file):
                 elif r == b == g and r <=1:
                     color='40' #Black
                 else:
-                    print('color for column %s failed!'%(i))
-                    print(r)
-                    print(g)
-                    print(b)
+                    #print('color for column %s failed!'%(i))
+                    #print(r)
+                    #print(g)
+                    #print(b)
                     color='00'
             else:
                 color=str(r)+';'+str(g)+';'+str(b)
@@ -120,6 +120,6 @@ def openImageAsASCII(file):
     
             #print(amig[j])
 
-    for i in amig:
-        print(i.replace('\n',''))
-    #return amig
+    #for i in amig:
+    #    print(i.replace('\n',''))
+    return amig
