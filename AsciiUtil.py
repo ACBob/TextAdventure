@@ -85,30 +85,35 @@ def openImageAsASCII(file,TrueColor):
             #print(r,g,b)
             if not TrueColor:
                 #NOT TRUE COLOR.
+                #Christ is this a mess, fix this at some point.
+                #White becomes orange for some reason!
                 if r > g and b:
-                    color='101' #Red
+                    color='31;1' #Red
                 elif g > r and b:
-                    color='102' #Green
+                    color='32;1' #Green
                 elif b > r and g:
-                    color='104' #Blue
+                    color='34;1' #Blue
+
+
                 #Mixes
-                elif r == b and r and b > g:
-                    color='45' #Magenta
-                elif r == g and r and g > b:
-                    color='43' #Orange
-                elif g == b and r and g > r:
-                    color='46' #Cyan
+                elif r == b and r>=113 and r <255 and g<199:
+                    color='35' #Magenta
+                elif r == g and r>=127 and r<255 and g>=199 and g<255:
+                    color='33' #Orange
+                elif g == b and g>=233 and r <255:
+                    color='36' #Cyan
+                
                 
 
                 #GrayScales.
                 elif r == b == g and r < 204 and r >128:
-                    color='47' #Gray
+                    color='37' #Gray
                 elif r == b == g and r >=204:
-                    color='107' #White
+                    color='37;1' #White
                 elif r == b == g and r<=128 and r>1:
-                    color='100' #Dark Gray
+                    color='30;1' #Dark Gray
                 elif r == b == g and r <=1:
-                    color='40' #Black
+                    color='30' #Black
                 else:
                     #print('color for column %s failed!'%(i))
                     #print(r)
@@ -118,7 +123,7 @@ def openImageAsASCII(file,TrueColor):
             else:
                 color=str(r)+';'+str(g)+';'+str(b)
             
-            amig[j] += '\033['+'48;2;'+color+'m'+gsval+'\033[0m'
+            amig[j] += '\033['+'38;2;'+color+'m'+gsval+'\033[0m'
     
             #print(amig[j])
 
@@ -128,9 +133,14 @@ def openImageAsASCII(file,TrueColor):
 
 if __name__ == "__main__":
     Running = True
+    global truecolor
     truecolor = None
-    while not type(truecolor) == bool:
-        truecolor = bool(input('True Color? '))
+    while truecolor == None:
+        truecolor = input('True Color? ')
+    if truecolor == 'y':
+        truecolor = True
+    else:
+        truecolor = False
     while Running:
         i = input('Image: ')
         if i == 'stop':
