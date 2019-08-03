@@ -17,7 +17,7 @@ def openImageAsASCII(file):
         return Exception("Requires String Path!")
     image = Image.open(file)
     usedImage = image.convert('L')
-    image.show()
+    #image.show()
 
     W,H = usedImage.size[0],usedImage.size[1]
     #print(W)
