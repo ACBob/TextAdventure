@@ -8,8 +8,8 @@ class Command:
     _registry = []
     def __init__(self,Name,Description,Code,HasArgs,Usage=None):
         """Probably Dangerous to make it run python code, WILL have to change."""
-        self.Name = str(Name)
-        self.Description = str(Description)
+        self.Name = Name
+        self.Description = Description
         self.Code = Code
         self.HasArgs = HasArgs
         if Usage == None and HasArgs:

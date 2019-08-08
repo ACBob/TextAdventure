@@ -4,7 +4,7 @@ import numpy as np
 
 pallette = "$@B%8&WM#*oahkbdpqwmZO0QLCJUYXzcvunxrjft/\|()1{}[]?-_+~<>i!lI;:,\"^`'. "
 
-def getAverageL(image,TrueColor=False):
+def getAverageL(image):
 
     im = np.array(image)
 
