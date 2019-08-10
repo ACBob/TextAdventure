@@ -1,6 +1,7 @@
 """Handles Players."""
 
 import util
+import mapSystem
 
 Players = [
     0 #Player 0 is the U n i v e r s e (it's actually not)
@@ -26,14 +27,35 @@ class spPlayer:
 
     def getName(self):
         return self.name
+
+    def turn(self):
+        print(mapSystem.getMapPosInfo(self.rx,self.ry))
         
-    def directionalMove(direction):
+    def directionalMove(self,direction):
         """Will move the player in a direction.
            Expects a direction.
            N/W/E/S. Will error out if not one of these."""
-        if not type(direction) == util.direction:
-            print("Given is not a direction!")
-            return 1 #Linux Documentation, Exit Codes.
+        if direction == 'N' or direction == 'E' or direction == 'S' or direction == 'W':
+            if mapSystem.getMapPosInfo(self.rx,self.ry)[direction]:
+                oldx,oldy = self.rx,self.ry
+                if direction == 'N':
+                    self.ry -= 1
+                elif direction == 'E':
+                    self.rx += 1
+                elif direction == 'S':
+                    self.ry += 1
+                elif direction == 'W':
+                    self.rx -= 1
+                if not mapSystem.isMapPosValid(self.rx,self.ry):
+                    self.rx,self.ry = oldx,oldy
+            else:
+                print("Can't go that way!")
+                
+            if mapSystem.isMapPosValid(self.rx,self.ry) == 'Valid':
+                print("Valid.")
+            else:
+                print("Position Invalid.")
+                self.rx,self.ry = oldx,oldy
         else:
-            print("TODO: Implement Directional Change.")
             print(direction)
+            

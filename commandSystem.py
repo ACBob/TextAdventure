@@ -3,6 +3,7 @@
 import shared
 from utilityprints import *
 import util
+import mapSystem
 
 class Command:
     _registry = []
@@ -33,7 +34,12 @@ class Command:
 
 def HelpCommand(command):
     print(Commands[''.join(command)].getDescription())
-
+def MapCommand(pId):
+    the_Map = mapSystem.getMap()
+    thePlayer = util.getPlayerFromId(pId)
+    the_Map[thePlayer.ry] = the_Map[thePlayer.ry][:thePlayer.rx]+'x'+the_Map[thePlayer.ry][thePlayer.rx+1:]
+    for i in the_Map:
+        print(i.replace('\n',''))
 
 #if shared.debug: Command('Test','Does Test','print("This should say this.")',False)
 
@@ -44,7 +50,9 @@ Command('MyName','Provides Your Name.','print(util.getPlayerFromId(FirerId).getN
 
 #Command('Die','Stops your heart.','print("Your heart stops beating, and you stop breathing. You are Dead. Game Over.") ; exit',False)
 
-Command('Move','Moves in Specified Direction.','util.getPlayerFromId(id).directionalMove(direction)',False)
+Command('Move','Moves in Specified Direction.','print(len(args[0]));util.getPlayerFromId(FirerId).directionalMove(args[0])',True)
+
+Command('Map','Shows the Map.',"MapCommand(FirerId)",False)
 
 global Commands
 Commands = {}

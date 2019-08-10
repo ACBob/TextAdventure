@@ -4,6 +4,7 @@
 import player
 import commandSystem
 import shared
+import mapSystem
 
 from utilityprints import *
 
@@ -12,6 +13,7 @@ def mainLoop():
     isRunning = True
     playerCharacter = player.spPlayer(0,0,'George')
     while isRunning:
+        playerCharacter.turn()
         action = input(': ')
         actionArgs = action.split(' ')[1:]
         command = action.split(' ')[0]
