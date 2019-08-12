@@ -1,4 +1,9 @@
-roomTypes = {'1':{'N':True,'E':True,'S':True,'W':False,'Objects':[]}}
+import toml
+
+RoomConfig = open('Configs/Rooms.toml','r')
+roomTypes = toml.loads(''.join(RoomConfig.readlines()))
+RoomConfig.close()
+#{'1':{'N':True,'E':True,'S':True,'W':False,'Objects':[],'Image':'images/Gradient.png'}}
 
 theMap = ['1;####',
           '1;1;1;1;1',
@@ -8,8 +13,8 @@ theMap = ['1;####',
 
 theMap = ['1####',
           '11111',
-          '1#1##',
-          '##11#']
+          '2#1##',
+          '##22#']
 
 def isMapPosValid(rx,ry):
     print(rx,ry)

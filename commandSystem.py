@@ -4,6 +4,7 @@ import shared
 from utilityprints import *
 import util
 import mapSystem
+import AsciiUtil
 
 class Command:
     _registry = []
@@ -41,6 +42,15 @@ def MapCommand(pId):
     for i in the_Map:
         print(i.replace('\n',''))
 
+def LookCommand(pId):
+    thePlayer = util.getPlayerFromId(pId)
+    tileInfo = mapSystem.getMapPosInfo(thePlayer.rx,thePlayer.ry)
+    if not tileInfo['Image'] == None:
+        for i in AsciiUtil.openImageAsASCII(tileInfo['Image'],True):
+            print(i.replace('\n',''))
+    else:
+        print('Room has no Image.')
+
 #if shared.debug: Command('Test','Does Test','print("This should say this.")',False)
 
 Command('Help','Provides Useful help to Specified command.','HelpCommand(args)',True)
@@ -53,6 +63,9 @@ Command('MyName','Provides Your Name.','print(util.getPlayerFromId(FirerId).getN
 Command('Move','Moves in Specified Direction.','print(len(args[0]));util.getPlayerFromId(FirerId).directionalMove(args[0])',True)
 
 Command('Map','Shows the Map.',"MapCommand(FirerId)",False)
+
+Command('Look','Looks in the current room.','LookCommand(FirerId)',False)
+Command('Look At','Looks at an object','print("IMPLEMENT")',True)
 
 global Commands
 Commands = {}

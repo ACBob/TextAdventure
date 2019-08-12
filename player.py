@@ -36,7 +36,7 @@ class spPlayer:
            Expects a direction.
            N/W/E/S. Will error out if not one of these."""
         if direction == 'N' or direction == 'E' or direction == 'S' or direction == 'W':
-            if mapSystem.getMapPosInfo(self.rx,self.ry)[direction]:
+            if mapSystem.getMapPosInfo(self.rx,self.ry)['Directions'][direction]:
                 oldx,oldy = self.rx,self.ry
                 if direction == 'N':
                     self.ry -= 1
