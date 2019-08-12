@@ -39,8 +39,20 @@ def MapCommand(pId):
     the_Map = mapSystem.getMap()
     thePlayer = util.getPlayerFromId(pId)
     the_Map[thePlayer.ry] = the_Map[thePlayer.ry][:thePlayer.rx]+'x'+the_Map[thePlayer.ry][thePlayer.rx+1:]
-    for i in the_Map:
-        print(i.replace('\n',''))
+    displayY = []
+    for y in range(len(the_Map)):
+        displayX = ''
+        for x in range(len(the_Map[y])):            
+            colours = mapSystem.getMapPosInfo(x,y)['Colour']
+            colorR,colorG,colorB = colours
+            colour = str(colorR)+';'+str(colorG)+';'+str(colorB)
+            tile = the_Map[y][x]
+
+            displayX += '\033['+'38;2;'+colour+'m'+tile+'\033[0m'
+        #print(i.replace('\n',''))
+        displayY.append(displayX)
+    for i in displayY:
+        print(i)
 
 def LookCommand(pId):
     thePlayer = util.getPlayerFromId(pId)

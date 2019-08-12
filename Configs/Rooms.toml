@@ -5,15 +5,30 @@
 #Image (If Applicable.)
 #Color (Color that the tile will be when looked at on the map. [R,G,B])
 
+["#"] #Great Example of A Room!
+Name = 'INVALID'
+Directions = { N = false, E = false, S = false, W = false }
+Objects = []
+Image = 'images/Void.png'
+Colour = ['0','0','0']
 
 [1]
-Directions = { N = true, E = true, S = true, W = true }
+Name = 'Room 1'
+Directions = { N = true, E = false, S = true, W = false }
 Objects = []
 Image = 'images/Gradient.png'
-Colour = [255,255,255]
+Colour = ['255','255','255']
 
 [2]
-Directions = { N = true, E = true, S = false, W = true }
+Name = 'Room 2'
+Directions = { N = true, E = false, S = false, W = false }
 Objects = []
 Image = 'images/Colors.png'
-Colour = [255,0,255]
+Colour = ['255','0','255']
+
+[3]
+Name = 'Room 3'
+Directions = { N = false, E = true, S = false, W = true }
+Objects = []
+Image = 'images/Lena512.bmp'
+Colour = ['255','0','0']

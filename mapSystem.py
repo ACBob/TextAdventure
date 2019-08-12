@@ -12,7 +12,7 @@ theMap = ['1;####',
 
 
 theMap = ['1####',
-          '11111',
+          '13131',
           '2#1##',
           '##22#']
 
@@ -21,10 +21,7 @@ def isMapPosValid(rx,ry):
     #print(theMap[ry][rx])
     try: tile = theMap[ry][rx]
     except IndexError: return 'Invalid'
-    if not tile[0] == '#':
-        return 'Valid'
-    else:
-        return 'Invalid'
+    return 'Valid'
 
 def getMap():
     dummyMap = []
