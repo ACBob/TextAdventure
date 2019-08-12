@@ -10,10 +10,10 @@
 Directions = { N = true, E = true, S = true, W = true }
 Objects = []
 Image = 'images/Gradient.png'
-Color = [255,255,255]
+Colour = [255,255,255]
 
 [2]
 Directions = { N = true, E = true, S = false, W = true }
 Objects = []
 Image = 'images/Colors.png'
-Color = [255,0,255]
+Colour = [255,0,255]
