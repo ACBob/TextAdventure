@@ -32,7 +32,7 @@ class Command:
         else: Info(self.Usage)
 
 def HelpCommand(command):
-    print(Commands[''.join(command)].getDescription())
+    return Commands[''.join(command)].getDescription()
 
 
 #if shared.debug: Command('Test','Does Test','print("This should say this.")',False)
@@ -59,5 +59,5 @@ def RunCommand(command,args,FirerId):
     #print(command)
     try: Commands[command].Run(args,FirerId)
     except KeyError:
-        print("I don't know how to %s."%command)
+        return "I don't know how to %s."%command
 
