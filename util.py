@@ -10,3 +10,6 @@ class direction:
 
 def getPlayerFromId(ID):
     return player.Players[ID]
+
+def RemovePlayer(ID):
+    player.Players.pop(int(ID))

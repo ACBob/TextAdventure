@@ -2,6 +2,11 @@ import socket
 import commandSystem
 import player
 
+import util
+
+global ConnectedClients
+ConnectedClients = []
+
 def mainLoop():
    print('Server Main Loop Begin')
    s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
@@ -31,9 +36,13 @@ def mainLoop():
                print(splitData)
                if splitData[1] == 'I WANT PLAYER':
                   print(Address,'Wants a player.')
-                  s.sendto(str(player.spPlayer(0,0,str(len(player.Players))).getId()).encode(),Address)
+                  s.sendto(str(player.spPlayer(0,0,splitData[2]).getId()).encode(),Address)
+                  ConnectedClients.append(Address)
                elif splitData[1] == 'I HAVE QUIT':
+                  ID = splitData[2]
                   print(Address,'Has Quit.')
+                  util.RemovePlayer(ID)
+                  ConnectedClients.remove(Address)
                   
             elif TypeOfInfo == 'COMMAND':
                command = splitData[1]
@@ -44,7 +53,10 @@ def mainLoop():
                response = commandSystem.RunCommand(command,actionArgs,pId)
                print(response)
                if response:
-                    s.sendto(str(response).encode(),Address)
+                    if not command == 'Say': s.sendto(str(response).encode(),Address)
+                    else:
+                        for Client in ConnectedClients:
+                           s.sendto(str(response).encode(),Client)
                     print('Server Sent Respone')
                else: 
                     s.send(b'Null?!')

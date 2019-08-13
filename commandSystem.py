@@ -40,6 +40,10 @@ class Command:
             print('We probably have arguments, and they arent there, not executing.')
             return self.Usage
 
+def Say(text):
+    print('We are the Say Command, and weve been told to run.')
+    return text
+
 def Help(command):
     print('We are the Help Command, and weve been told to run.')
     Output = Commands[''.join(command)].getDescription()
@@ -50,6 +54,8 @@ def Help(command):
 #if shared.debug: Command('Test','Does Test','print("This should say this.")',False)
 
 Command('Help','Provides Useful help to Specified command.',True)
+
+Command('Say','Says the Input Text.',True,'You attempt to speak, but nothing escapes your lips.')
 
 #Command('MyID','Provides Your ID.','print(FirerId)',False)
 #Command('MyName','Provides Your Name.','print(util.getPlayerFromId(FirerId).getName())',False)

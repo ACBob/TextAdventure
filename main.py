@@ -41,36 +41,46 @@ def mainLoop():
     print('Client Main Loop')
     global IP
     global Port
+    global Name
     if Flags[0] == 'Multi':
         IP = ''
         Port = ''
+        Name = ''
         while IP == '':
             IP = input('IP? ')
         while Port == '':
             Port = int(input('PORT? '))
+        while Name == '':
+            Name = input('NAME? ')
         try: s.connect((IP,int(Port)))
         except ConnectionRefusedError:
             print('Connection Refused!')
             return
+        except Exception as e:
+            print(e)
+            return
     else:
         IP = '127.0.0.1'
         Port = 12346
+        Name = 'Simon'
         s.connect((IP,Port))
     print('Client Connected')
     isRunning = True
     #playerCharacter = player.spPlayer(0,0,'George')
-    s.sendto(('INFO'+';'+'I WANT PLAYER').encode(),(IP,Port))#+str(playerCharacter.getId())).encode(),(IP,Port))
+    s.sendto(('INFO'+';'+'I WANT PLAYER'+';'+Name).encode(),(IP,Port))#+str(playerCharacter.getId())).encode(),(IP,Port))
     print('Client Sent Needed Information.')
     #playerCharacter = util.getPlayerFromId(int(WaitForResponse()))
     OurId = int(WaitForResponse())
     while isRunning:
         print("loop, client")
-        action = input(': ')
+        readLetter = sys.stdin.read(1)
+        MagicCommandFixer.append(readLetter)
+        action = MagicCommandFixer.split('\n')[0]
         actionArgs = action.split(' ')[1:]
         command = action.split(' ')[0]
         if action == 'Quit':
             Info("Quit.")
-            s.sendto(('INFO'+';'+'I HAVE QUIT').encode(),(IP,Port))
+            s.sendto(('INFO'+';'+'I HAVE QUIT'+';'+str(OurId)).encode(),(IP,Port))
             s.close()
             print('Client Close Socket')
             return 0
