@@ -6,25 +6,63 @@ import commandSystem
 import shared
 
 import os
+import sys
 
 import threading
 import Server
+
+import util
 
 import time
 
 from utilityprints import *
 
-s = socket.socket()
+s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+
+
+def WaitForResponse():
+    try:
+        recieved = s.recvfrom(1024)[0].decode()
+        while not recieved:
+            print("WAITING FOR SERVER...")
+            time.sleep(0.5)
+            recieved = s.recvfrom(1024)[0].decode()
+        print('Client Recieved Response',recieved)
+        return recieved
+        if recieved == 'CRASH':
+            print('The Server Crashed somehow! Investigate.')
+            return
+    except BrokenPipeError:
+        print('Client Encountered Broken Pipe')
+        pass
 
 def mainLoop():
     Debug("Main loop")
     print('Client Main Loop')
-    s.connect(('127.0.0.1',12346))
+    global IP
+    global Port
+    if Flags[0] == 'Multi':
+        IP = ''
+        Port = ''
+        while IP == '':
+            IP = input('IP? ')
+        while Port == '':
+            Port = int(input('PORT? '))
+        try: s.connect((IP,int(Port)))
+        except ConnectionRefusedError:
+            print('Connection Refused!')
+            return
+    else:
+        IP = '127.0.0.1'
+        Port = 12346
+        s.connect((IP,Port))
     print('Client Connected')
     isRunning = True
-    playerCharacter = player.spPlayer(0,0,'George')
-    s.send(('INFO'+str(playerCharacter.getId())).encode())
+    #playerCharacter = player.spPlayer(0,0,'George')
+    s.sendto(('INFO'+';'+'I WANT PLAYER').encode(),(IP,Port))#+str(playerCharacter.getId())).encode(),(IP,Port))
     print('Client Sent Needed Information.')
+    #playerCharacter = util.getPlayerFromId(int(WaitForResponse()))
+    OurId = int(WaitForResponse())
     while isRunning:
         print("loop, client")
         action = input(': ')
@@ -37,20 +75,8 @@ def mainLoop():
             return 0
         else:
             #commandSystem.RunCommand(command,actionArgs,playerCharacter.getId())
-            s.send(b'COMMAND'+b';'+command.encode()+b';'+(','.join(actionArgs)).encode()+b';'+str(playerCharacter.getId()).encode())
-            try:
-                recieved = s.recv(1024).decode()
-                while not recieved:
-                    print("WAITING FOR SERVER...")
-                    time.sleep(0.5)
-                    recieved = s.recv(1024).decode()
-                print('Client Recieved Response',recieved)
-                if recieved == 'CRASH':
-                    print('The Server Crashed somehow! Investigate.')
-                    return
-            except BrokenPipeError:
-                print('Client Encountered Broken Pipe')
-                pass
+            s.send(b'COMMAND'+b';'+command.encode()+b';'+(','.join(actionArgs)).encode()+b';'+str(OurId).encode())#+str(playerCharacter.getId()).encode())
+            WaitForResponse()
 
 
 
@@ -63,8 +89,14 @@ try:
 except Exception:
     pass
 
-ServerThread.start()
-print("SERVER")
+#Flags = sys.argv
+#print(Flags)
+
+Flags = ['Multi']
+
+
+if not Flags[0] == 'Multi': ServerThread.start()
+#print("SERVER")
 time.sleep(0.5)
 print("CLIENT")
 ClientThread.start()
