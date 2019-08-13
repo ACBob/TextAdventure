@@ -32,8 +32,8 @@ def mainLoop():
                actionArgs = splitData[2].split(',')
                pId = int(splitData[3])
                response = commandSystem.RunCommand(command,actionArgs,pId)
-               if type(response) == 'str':
-                    c.send(response.encode())
+               if response:
+                    c.send(str(response).encode())
                     print('Server Sent Respone')
                else: 
                     c.send(b'Null?!')

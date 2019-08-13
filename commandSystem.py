@@ -27,9 +27,18 @@ class Command:
         return self.Name
 
     def Run(self,args,FirerId):
-        if len(args)>0 and self.HasArgs: exec(self.Code)
-        elif not self.HasArgs: exec(self.Code)
-        else: Info(self.Usage)
+        print('Running',self.Name)
+        if len(args)>0 and self.HasArgs:
+            print('We have arguments, and they are there. Executing.')
+            #return exec(self.Code)
+            print('Output is',exec(self.Code))
+        elif not self.HasArgs:
+            print('We dont have arguments, and were executing.')
+            #return exec(self.Code)
+            print('Output is',exec(self.Code))
+        else:
+            print('We probably have arguments, and they arent there, not executing.')
+            return self.Usage
 
 def HelpCommand(command):
     return Commands[''.join(command)].getDescription()
@@ -58,7 +67,10 @@ print(Commands)
 def RunCommand(command,args,FirerId):
     #print(command)
     print('Command system was told to run',command,'with',args,'by',FirerId)
-    try: Commands[command].Run(args,FirerId)
+    try:
+        print('Attempting to run said command.')
+        Commands[command].Run(args,FirerId)
     except KeyError:
+        print('Failed, retruning error message.')
         return "I don't know how to %s."%command
 
