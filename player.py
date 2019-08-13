@@ -18,7 +18,7 @@ class spPlayer:
         self.rx = rx
         self.ry = ry
 
-        self.PlayerId = Players[-1]+1
+        self.PlayerId = len(Players)+1
         Players.append(self)
 
     def getId(self):
