@@ -57,6 +57,7 @@ print(Commands)
 
 def RunCommand(command,args,FirerId):
     #print(command)
+    print('Command system was told to run',command,'with',args,'by',FirerId)
     try: Commands[command].Run(args,FirerId)
     except KeyError:
         return "I don't know how to %s."%command
