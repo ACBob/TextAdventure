@@ -70,6 +70,7 @@ def mainLoop():
         command = action.split(' ')[0]
         if action == 'Quit':
             Info("Quit.")
+            s.sendto(('INFO'+';'+'I HAVE QUIT').encode(),(IP,Port))
             s.close()
             print('Client Close Socket')
             return 0

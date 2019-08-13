@@ -29,8 +29,12 @@ def mainLoop():
             TypeOfInfo = splitData[0]
             if TypeOfInfo == 'INFO':
                print(splitData)
-               print(Address,'Wants a player.')
-               s.sendto(str(player.spPlayer(0,0,str(len(player.Players))).getId()).encode(),Address)
+               if splitData[1] == 'I WANT PLAYER':
+                  print(Address,'Wants a player.')
+                  s.sendto(str(player.spPlayer(0,0,str(len(player.Players))).getId()).encode(),Address)
+               elif splitData[1] == 'I HAVE QUIT':
+                  print(Address,'Has Quit.')
+                  
             elif TypeOfInfo == 'COMMAND':
                command = splitData[1]
                actionArgs = splitData[2].split(',')
