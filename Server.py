@@ -30,8 +30,11 @@ def mainLoop():
             elif TypeOfInfo == 'COMMAND':
                command = splitData[1]
                actionArgs = splitData[2].split(',')
+               if actionArgs == ['']:
+                  actionArgs = []
                pId = int(splitData[3])
                response = commandSystem.RunCommand(command,actionArgs,pId)
+               print(response)
                if response:
                     c.send(str(response).encode())
                     print('Server Sent Respone')
