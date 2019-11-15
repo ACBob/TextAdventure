@@ -9,7 +9,7 @@ import os
 import sys
 
 import threading
-import Server
+import Server as ServerCode
 
 import util
 
@@ -17,97 +17,78 @@ import time
 
 from utilityprints import *
 
-s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
 
+class ClientInstance:
 
-def WaitForResponse():
-    try:
-        recieved = s.recvfrom(1024)[0].decode()
-        while not recieved:
-            print("WAITING FOR SERVER...")
-            time.sleep(0.5)
-            recieved = s.recvfrom(1024)[0].decode()
-        print('Client Recieved Response',recieved)
-        return recieved
-        if recieved == 'CRASH':
-            print('The Server Crashed somehow! Investigate.')
+    def __init__(self,clientData):
+        self.clientData = clientData
+        #We come with a socket
+        self.clientSocket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+
+    def connect(self,ip,socket):
+        self.clientSocket.connect((ip,socket))
+
+    def disconnect(self):
+        self.clientSocket.send('Goodbye')
+        self.clientSocket.close()
+
+    def recieveData(self):
+        #dostuff
+        return self.clientSocket.recv(8192) #We accept 8,192 bytes
+
+    def sendData(self,data):
+        self.clientSocket.send(data)
+
+    def clientLoop(self):
+
+        try:
+            #while True:
+            self.sendData(bytes(input('>: '),'utf-8'))
+            Info(self.recieveData().decode('utf-8'))
+            self.clientSocket.close()
+
             return
-    except BrokenPipeError:
-        print('Client Encountered Broken Pipe')
-        pass
+        except Exception as E:
+            Debug("Error, CANCEL EVERYTHING AAAA")
+            Client.clientSocket.close()
+
+            raise E        
+
 
 def mainLoop():
-    Debug("Main loop")
-    print('Client Main Loop')
-    global IP
-    global Port
-    global Name
-    if Flags[0] == 'Multi':
-        IP = ''
-        Port = ''
-        Name = ''
-        while IP == '':
-            IP = input('IP? ')
-        while Port == '':
-            Port = int(input('PORT? '))
-        while Name == '':
-            Name = input('NAME? ')
-        try: s.connect((IP,int(Port)))
-        except ConnectionRefusedError:
-            print('Connection Refused!')
-            return
-        except Exception as e:
-            print(e)
-            return
-    else:
-        IP = '127.0.0.1'
-        Port = 12346
-        Name = 'Simon'
-        s.connect((IP,Port))
-    print('Client Connected')
-    isRunning = True
-    #playerCharacter = player.spPlayer(0,0,'George')
-    s.sendto(('INFO'+';'+'I WANT PLAYER'+';'+Name).encode(),(IP,Port))#+str(playerCharacter.getId())).encode(),(IP,Port))
-    print('Client Sent Needed Information.')
-    #playerCharacter = util.getPlayerFromId(int(WaitForResponse()))
-    OurId = int(WaitForResponse())
-    while isRunning:
-        print("loop, client")
-        readLetter = sys.stdin.read(1)
-        MagicCommandFixer.append(readLetter)
-        action = MagicCommandFixer.split('\n')[0]
-        actionArgs = action.split(' ')[1:]
-        command = action.split(' ')[0]
-        if action == 'Quit':
-            Info("Quit.")
-            s.sendto(('INFO'+';'+'I HAVE QUIT'+';'+str(OurId)).encode(),(IP,Port))
-            s.close()
-            print('Client Close Socket')
-            return 0
-        else:
-            #commandSystem.RunCommand(command,actionArgs,playerCharacter.getId())
-            s.send(b'COMMAND'+b';'+command.encode()+b';'+(','.join(actionArgs)).encode()+b';'+str(OurId).encode())#+str(playerCharacter.getId()).encode())
-            WaitForResponse()
+    #Init Stuff
+    clientData = {}
+    clientData['ClientName'] = socket.gethostname()
+    clientData['ClientVersion'] = ['NowhereNearFinished-0',0.0]
+    clientData['ClientIP'] = socket.gethostbyname(clientData['ClientName'])
 
+    Info("Client Data: {}".format(clientData))
 
+    Client = ClientInstance(clientData) #Create our client instance
 
+    #Determine if we're a singleplayer session or not
+    singlePlayer = True
+
+    #Using this, get our server instance
+    serverData = {}
+    if singlePlayer:
+        Info("Singleplayer Session.")
+
+        serverData['ServerType'] = 'Local'
+        serverData['ServerHost'] = Client.clientData['ClientName'] #We're the host, the server should know.
+        
+    Info("Server Data: {}".format(serverData))
+    #Create our Local Server    
+    Server = ServerCode.ServerInstance(serverData)
+
+    
+    Server.connect('127.0.0.1',2342)
+    ServerThread = threading.Thread(target=Server.serverLoop)
+    ServerThread.start()
+    Client.connect('127.0.0.1',2342)
+    Client.clientLoop()
+    
 shared.debug = True
 Info("Debug. Remember to disable.")
 
-try:
-    ClientThread = threading.Thread(target=mainLoop)
-    ServerThread = threading.Thread(target=Server.mainLoop)
-except Exception:
-    pass
-
-#Flags = sys.argv
-#print(Flags)
-
-Flags = ['Multi']
-
-
-if not Flags[0] == 'Multi': ServerThread.start()
-#print("SERVER")
-time.sleep(0.5)
-print("CLIENT")
-ClientThread.start()
+mainLoop()

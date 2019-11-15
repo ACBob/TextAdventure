@@ -3,9 +3,50 @@ import commandSystem
 import player
 
 import util
+import utilityprints
 
 global ConnectedClients
 ConnectedClients = []
+
+class ServerInstance:
+
+   def __init__(self,serverData):
+      self.serverData = serverData #Store our server data (incase we share our information)
+      #We come with a socket
+      self.serverSocket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+
+   def connect(self,ip,socket):
+      self.serverSocket.bind((ip,socket))
+      self.serverSocket.listen(5)
+
+   def disconnect(self):
+      self.clientSocket.send('Goodbye')
+      self.clientSocket.close()
+
+   def recieveData(self):
+      #dostuff
+      return self.clientSocket.recv(8192) #We accept 8,192 bytes
+
+   def serverLoop(self):
+
+      try:
+      
+         while True:
+            conn, addr = self.serverSocket.accept()
+            from_client = ''
+            while True:
+               data = conn.recv(4096)
+               if not data: break
+               from_client += data.decode('utf-8')
+               print(from_client)
+               conn.send(b"I am SERVER\n")
+            conn.close()
+            print('client disconnected')
+      except Exception as E:
+         print("Error, CANCEL EVERYTHING AAaA")
+         self.serverSocket.close()
+
+         raise E
 
 def mainLoop():
    print('Server Main Loop Begin')
