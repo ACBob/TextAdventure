@@ -3,7 +3,8 @@ import commandSystem
 import player
 
 import util
-import utilityprints
+from utilityprints import *
+import json
 
 global ConnectedClients
 ConnectedClients = []
@@ -14,6 +15,9 @@ class ServerInstance:
       self.serverData = serverData #Store our server data (incase we share our information)
       #We come with a socket
       self.serverSocket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+
+   def __del__(self):
+        self.serverSocket.close()
 
    def connect(self,ip,socket):
       self.serverSocket.bind((ip,socket))
@@ -28,26 +32,22 @@ class ServerInstance:
       return self.clientSocket.recv(8192) #We accept 8,192 bytes
 
    def serverLoop(self):
+      Debug('Server Main Loop')
+      Connection, Address = self.serverSocket.accept()
+      Debug('Connection From: {}'.format(Address))
+      while True:
+         curData = Connection.recv(8192)
+         curData = curData.decode('utf-8')
+         if curData:
+            Debug(curData)
+            curData = json.loads(curData)
 
-      try:
-      
-         while True:
-            conn, addr = self.serverSocket.accept()
-            from_client = ''
-            while True:
-               data = conn.recv(4096)
-               if not data: break
-               from_client += data.decode('utf-8')
-               print(from_client)
-               conn.send(b"I am SERVER\n")
-            conn.close()
-            print('client disconnected')
-      except Exception as E:
-         print("Error, CANCEL EVERYTHING AAaA")
-         self.serverSocket.close()
-
-         raise E
-
+            if curData['MessageType'] == 'Request':
+               Debug('Request')
+               if curData['MessageContent'] == 'ServerData':
+                  Debug('Server Data')
+                  Connection.send(bytes(json.dumps(self.serverData),'utf-8'))
+            
 def mainLoop():
    print('Server Main Loop Begin')
    s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)

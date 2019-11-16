@@ -15,7 +15,10 @@ import util
 
 import time
 
+import random #For generating a port
+
 from utilityprints import *
+import json
 
 
 class ClientInstance:
@@ -24,9 +27,13 @@ class ClientInstance:
         self.clientData = clientData
         #We come with a socket
         self.clientSocket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        self.Connection = ()
 
-    def connect(self,ip,socket):
-        self.clientSocket.connect((ip,socket))
+    def __del__(self):
+        self.clientSocket.close()
+
+    def connect(self,cInfo): #cInfo -- Connection info
+        self.clientSocket.connect(cInfo)
 
     def disconnect(self):
         self.clientSocket.send('Goodbye')
@@ -36,23 +43,50 @@ class ClientInstance:
         #dostuff
         return self.clientSocket.recv(8192) #We accept 8,192 bytes
 
+    def tryRecieve(self,message):
+
+        tries = 5 #5 Attempts
+
+        data = None
+
+        while tries or not Data:
+            tries-=1
+            Info('{}, Attempt {}'.format(message,str(tries)))
+            data = self.recieveData()
+
+        if not data:
+            Info('Request ran-out of attempts.')
+            return None
+        else:
+            return data
+
     def sendData(self,data):
-        self.clientSocket.send(data)
+        self.clientSocket.send(bytes(data,'utf-8'))
+
+    def sendMessage(self,messageType,messageContent,flair=None):
+        self.sendData(json.dumps({'MessageType':messageType,'MessageContent':messageContent,'MessageFlair':flair}))
 
     def clientLoop(self):
+        Debug('Beggining Client\'s Main loop')
 
+        Debug('Attemtping Connection')
         try:
-            #while True:
-            self.sendData(bytes(input('>: '),'utf-8'))
-            Info(self.recieveData().decode('utf-8'))
-            self.clientSocket.close()
+            self.connect(self.Connection)
+        except (Exception,OSError) as E:
+            Info('Connection Failed.')
+            Debug(E)
+            return -1
+        Info('Connection Success')
+        Debug('Requesting Server Data')
+        self.sendMessage('Request','ServerData')
+        
+        Info(self.tryRecieve('Server Info'))
+        #while not serverInfo:
+        #    Debug('waiting for server data...')
+        #    serverInfo = self.recieveData().decode('utf-8')
+        serverInfo = json.loads(serverInfo)
 
-            return
-        except Exception as E:
-            Debug("Error, CANCEL EVERYTHING AAAA")
-            Client.clientSocket.close()
-
-            raise E        
+        Info('Connected to {} Server @ {}'.format(serverInfo['ServerType'],serverInfo['ServerHost']))
 
 
 def mainLoop():
@@ -81,11 +115,12 @@ def mainLoop():
     #Create our Local Server    
     Server = ServerCode.ServerInstance(serverData)
 
+    Port = random.randint(25566,36677)
     
-    Server.connect('127.0.0.1',2342)
+    Server.connect('127.0.0.1',Port)
+    Client.Connection = ('127.0.0.1',Port)
     ServerThread = threading.Thread(target=Server.serverLoop)
     ServerThread.start()
-    Client.connect('127.0.0.1',2342)
     Client.clientLoop()
     
 shared.debug = True
