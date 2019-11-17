@@ -31,6 +31,12 @@ class ServerInstance:
       #dostuff
       return self.clientSocket.recv(8192) #We accept 8,192 bytes
 
+   def sendData(self,data,connection):
+        connection.send(bytes(data,'utf-8'))
+
+   def sendMessage(self,connection,messageType,messageContent,flair=None):
+        self.sendData(json.dumps({'MessageType':messageType,'MessageContent':messageContent,'MessageFlair':flair}),connection)
+
    def serverLoop(self):
       Debug('Server Main Loop')
       Connection, Address = self.serverSocket.accept()
@@ -46,7 +52,16 @@ class ServerInstance:
                Debug('Request')
                if curData['MessageContent'] == 'ServerData':
                   Debug('Server Data')
-                  Connection.send(bytes(json.dumps(self.serverData),'utf-8'))
+                  self.sendMessage(Connection,'Response',json.dumps(self.serverData),'ServerData')
+
+            elif curData['MessageType'] == 'Action':
+               actionInfo = curData['MessageContent'].split()
+
+               commandResponse = commandSystem.RunCommand(actionInfo[0],actionInfo[1:],0)
+
+               Debug(commandResponse)
+
+               self.sendMessage(Connection,'ActionResponse',commandResponse)
             
 def mainLoop():
    print('Server Main Loop Begin')

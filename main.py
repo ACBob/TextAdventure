@@ -5,6 +5,8 @@ import player
 import commandSystem
 import shared
 
+import time
+
 import os
 import sys
 
@@ -28,6 +30,7 @@ class ClientInstance:
         #We come with a socket
         self.clientSocket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         self.Connection = ()
+        self.curInput = ''
 
     def __del__(self):
         self.clientSocket.close()
@@ -41,7 +44,7 @@ class ClientInstance:
 
     def recieveData(self):
         #dostuff
-        return self.clientSocket.recv(8192) #We accept 8,192 bytes
+        return self.clientSocket.recv(2048) #We accept 2,048 bytes
 
     def tryRecieve(self,message):
 
@@ -49,10 +52,15 @@ class ClientInstance:
 
         data = None
 
-        while tries or not Data:
+        while True:
             tries-=1
             Info('{}, Attempt {}'.format(message,str(tries)))
             data = self.recieveData()
+
+            if data or not tries:
+                break
+
+            time.sleep(1)
 
         if not data:
             Info('Request ran-out of attempts.')
@@ -66,8 +74,14 @@ class ClientInstance:
     def sendMessage(self,messageType,messageContent,flair=None):
         self.sendData(json.dumps({'MessageType':messageType,'MessageContent':messageContent,'MessageFlair':flair}))
 
+    def inputThread(self):
+        while True:
+            if not self.curInput == '': continue #Causes the input to NOT be reset while we operate on it.
+            self.curInput = input('>: ').strip()
+            Debug('input loop')
+
     def clientLoop(self):
-        Debug('Beggining Client\'s Main loop')
+        Debug('Client Initialisation')
 
         Debug('Attemtping Connection')
         try:
@@ -80,13 +94,39 @@ class ClientInstance:
         Debug('Requesting Server Data')
         self.sendMessage('Request','ServerData')
         
-        Info(self.tryRecieve('Server Info'))
+        serverInfo = self.tryRecieve('Server Info')
+
+        if not serverInfo:
+            Info('Request Failed.')
+            return
         #while not serverInfo:
         #    Debug('waiting for server data...')
         #    serverInfo = self.recieveData().decode('utf-8')
-        serverInfo = json.loads(serverInfo)
+        serverInfo = json.loads(json.loads(serverInfo)['MessageContent'])
 
         Info('Connected to {} Server @ {}'.format(serverInfo['ServerType'],serverInfo['ServerHost']))
+
+
+        Debug('Starting Input Thread')
+        self.inThread = threading.Thread(target=self.inputThread)
+
+        self.inThread.start()
+
+
+        Debug('Client Main Loop')
+        while True:
+                  
+            if not self.curInput == '':
+                Debug(self.curInput)
+
+                self.sendMessage('Action',self.curInput)
+                
+                self.curInput = '' #Clear the input (And allows us to get more)
+
+
+            Response = self.recieveData()
+
+            Info(Response)
 
 
 def mainLoop():
